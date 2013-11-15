@@ -16,6 +16,7 @@
 
 package uk.co.senab.actionbarpulltorefresh.library;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
@@ -29,7 +30,6 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-
 import java.util.Set;
 import java.util.WeakHashMap;
 
@@ -101,6 +101,7 @@ public class PullToRefreshAttacher implements View.OnTouchListener {
 		return new PullToRefreshAttacher(activity, options);
 	}
 
+	@SuppressLint("NewApi")
 	protected PullToRefreshAttacher(Activity activity, Options options) {
 		if (options == null) {
 			Log.i(LOG_TAG, "Given null options so using default options.");
@@ -813,6 +814,7 @@ public class PullToRefreshAttacher implements View.OnTouchListener {
 		/**
 		 * @return Context which should be used for inflating the header layout
 		 */
+		@SuppressLint("NewApi")
 		public Context getContextForInflater(Activity activity) {
 			if (Build.VERSION.SDK_INT >= 14) {
 				return activity.getActionBar().getThemedContext();

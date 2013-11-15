@@ -19,14 +19,18 @@ package uk.co.senab.actionbarpulltorefresh.library;
 import android.content.Context;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.origamilabs.library.views.StaggeredGridView;
+
 import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.AbsListViewDelegate;
 import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.ScrollYDelegate;
+import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.StaggeredDelegate;
 import uk.co.senab.actionbarpulltorefresh.library.viewdelegates.WebViewDelegate;
 
 class InstanceCreationUtils {
@@ -41,14 +45,33 @@ class InstanceCreationUtils {
         BUILT_IN_DELEGATES = new HashMap<Class, Class>();
         BUILT_IN_DELEGATES.put(AbsListViewDelegate.SUPPORTED_VIEW_CLASS, AbsListViewDelegate.class);
         BUILT_IN_DELEGATES.put(WebViewDelegate.SUPPORTED_VIEW_CLASS, WebViewDelegate.class);
+        BUILT_IN_DELEGATES.put(StaggeredDelegate.SUPPORTED_VIEW_CLASS, StaggeredDelegate.class);
+
     }
 
     static PullToRefreshAttacher.ViewDelegate getBuiltInViewDelegate(final View view) {
         final Set<Map.Entry<Class, Class>> entries = BUILT_IN_DELEGATES.entrySet();
         for (final Map.Entry<Class, Class> entry : entries) {
-            if (entry.getKey().isInstance(view)) {
+            if (entry.getKey().isInstance(view) || entry.getKey().isInstance((ViewGroup)view)) {
                 return InstanceCreationUtils.newInstance(view.getContext(),
                         entry.getValue(), VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, null);
+            }
+        }
+
+        // Default is the ScrollYDelegate
+        return InstanceCreationUtils.newInstance(view.getContext(),
+                ScrollYDelegate.class, VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, null);
+    }
+    
+    static PullToRefreshAttacher.ViewDelegate getBuiltInViewDelegateGroup(final ViewGroup view) {
+        final Set<Map.Entry<Class, Class>> entries = BUILT_IN_DELEGATES.entrySet();
+        for (final Map.Entry<Class, Class> entry : entries) {
+            if (entry.getKey().isInstance(view) || entry.getKey().isInstance((ViewGroup)view)) {
+ 
+            	PullToRefreshAttacher.ViewDelegate v= InstanceCreationUtils.newInstance(view.getContext(),
+                            entry.getValue(), VIEW_DELEGATE_CONSTRUCTOR_SIGNATURE, null);
+            		return v;
+
             }
         }
 
@@ -77,6 +100,7 @@ class InstanceCreationUtils {
         return null;
     }
 
+    
     private static <T> T newInstance(Context context, Class clazz, Class[] constructorSig,
             Object[] arguments) {
         try {

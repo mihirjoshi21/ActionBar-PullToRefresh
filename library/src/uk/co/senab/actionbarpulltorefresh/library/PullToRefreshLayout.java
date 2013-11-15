@@ -16,6 +16,9 @@
 
 package uk.co.senab.actionbarpulltorefresh.library;
 
+import com.origamilabs.library.views.StaggeredGridView;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.util.AttributeSet;
@@ -55,7 +58,7 @@ public class PullToRefreshLayout extends FrameLayout {
             PullToRefreshAttacher.OnRefreshListener refreshListener) {
         View view;
         for (int i = 0, z = getChildCount(); i < z; i++) {
-            view = getChildAt(i);
+            view = getChildAt(i);      
 
             if (mPullToRefreshAttacher != null) {
                 mPullToRefreshAttacher.removeRefreshableView(view);
@@ -108,7 +111,8 @@ public class PullToRefreshLayout extends FrameLayout {
         return super.onTouchEvent(event);
     }
 
-    @Override
+    @SuppressLint("NewApi")
+	@Override
     protected void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
